@@ -59,7 +59,7 @@ jobs:
               `Developer onboarding lead : ${mention}`;
             }
             console.log(`Message: ${message}`);
-            if(prCount === 1 or prCount === 2){
+            if(prCount === 1 || prCount === 2){
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
