@@ -49,12 +49,14 @@ jobs:
             console.log(`PR Count: ${prCount}`);
             
             let message;
-            if (prCount === 30) {
+            if (prCount === 1) {
               message = `Thanks @${author}, and congratulations on your first PR to Oppia! 🎉 🥳\n` +
-              `By successfully resolving one more issue, you could be on your way to joining one of Oppia's esteemed core teams and get the collaborator rights.\n` +
+              `By successfully resolving one more issue, you could be on your way to joining one of Oppia's esteemed core teams and get the collaborator rights.\n\n` +
               `Developer onboarding lead : ${mention}`;
-            } else if (prCount === 2) {
-              message = `@${author} You have merged 2 PRs successfully! ${mention}`;
+            } else if (prCount === 30) {
+              message = `@${author} Congratulations on your second merged PR to Oppia! 🎉 🥳` +
+              `Since you've merged two PRs, you might be eligible to join the Oppia dev team as a collaborator. If you'd like to do that, please fill in [this form](https://forms.gle/NxPjimCMqsSTNUgu5). Thanks!` +
+              `Developer onboarding lead : ${mention}`;
             } else {
               message = `Excellent! @${author} You have merged ${prCount} PRs! ${mention}`;
             }
