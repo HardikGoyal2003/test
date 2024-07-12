@@ -6,7 +6,7 @@ on:
     types: [closed]
 
 permissions: write-all
-# lgklhklkl
+
 jobs:
   comment-on-merge:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
@@ -49,9 +49,7 @@ jobs:
             console.log(`PR Count: ${prCount}`);
             
             let message;
-            if (isNaN(prCount)) {
-              message = `Error: PR Count could not be determined. Please check the workflow setup.`;
-            } else if (prCount === 1) {
+            if (prCount === 1) {
               message = `@${author} 1 PR merged successfully! ${mention}`;
             } else if (prCount === 2) {
               message = `@${author} You have merged 2 PRs successfully! ${mention}`;
