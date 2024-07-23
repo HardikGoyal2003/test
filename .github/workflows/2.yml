@@ -43,6 +43,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const sanitizeHtml = require('sanitize-html');
             const prCount = parseInt(process.env.PR_COUNT);
             const author = process.env.AUTHOR;
             const mention = '@HardikGoyal2003';
