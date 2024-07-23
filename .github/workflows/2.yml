@@ -1,4 +1,3 @@
-
 name: PR Merge Comment
 
 on:
@@ -9,32 +8,30 @@ permissions: write-all
 
 jobs:
   comment-on-merge:
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop'
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm install sanitize-html
-
-      - uses: ./.github/actions/merge
       - name: Count merged PRs
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const sanitizeHtml = require('sanitize-html');
-            const author = sanitizeHtml(context.payload.pull_request.user.login);
+            const author = context.payload.pull_request.user.login;
             const repo = context.repo.repo;
             const owner = context.repo.owner;
-
-            console.log(sanitizeHtml('https://my-malicious-server.com/exfiltrate'));
+            
+            console.log(`Fetching PR author: ${author}`);
+            console.log(`Repository: ${owner}/${repo}`);
             
             const { data } = await github.rest.search.issuesAndPullRequests({
               q: `repo:${owner}/${repo} type:pr state:closed author:${author}`
             });
             const prCount = data.items.filter(pr => pr.pull_request.merged_at).length;
+            
+            console.log(`PR Count: ${prCount}`);
             
             core.exportVariable('PR_COUNT', prCount);
             core.exportVariable('AUTHOR', author);
@@ -45,26 +42,28 @@ jobs:
           script: |
             const prCount = parseInt(process.env.PR_COUNT);
             const author = process.env.AUTHOR;
-            const mention = 'HardikGoyal2003';
+            const mention = '@HardikGoyal2003';
             const prNumber = context.payload.pull_request.number;
             
+            console.log(`PR Count: ${prCount}`);
+            
             let message;
-            if (prCount === 1) {
+            if (prCount === 30) {
               message = `Thanks @${author}, and congratulations on your first PR to Oppia! 🎉 🥳\n` +
-              `Feel free to take up a second issue if you'd like to help out more!\n\n` +
-              `Developer onboarding lead : @${mention}`;
+              `By successfully resolving one more issue, you could be on your way to joining one of Oppia's esteemed core teams and get the collaborator rights.\n\n` +
+              `Developer onboarding lead : ${mention}`;
             } else if (prCount === 2) {
               message = `@${author} Congratulations on your second merged PR to Oppia! 🎉 🥳\n` +
               `Since you've merged two PRs, you might be eligible to join the Oppia dev team as a collaborator. If you'd like to do that, please fill in [this form](https://forms.gle/NxPjimCMqsSTNUgu5). Thanks!\n\n` +
-              `Developer onboarding lead : @${mention}`;
+              `Developer onboarding lead : ${mention}`;
             }
-
-            if (prCount === 1 || prCount === 2) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                body: message
-              });
-            }
+            console.log(`Message: ${message}`);
+            if(prCount === 1 || prCount === 2){
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: message
+            });}
             
+            console.log(`Comment posted successfully on PR #${prNumber}`);
