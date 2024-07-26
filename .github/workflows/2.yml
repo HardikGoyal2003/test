@@ -6,6 +6,7 @@ on:
 
 permissions: write-all
 
+
 jobs:
   comment-on-merge:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop'
