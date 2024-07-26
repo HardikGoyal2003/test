@@ -6,7 +6,6 @@ on:
 
 permissions: write-all
 
-
 jobs:
   comment-on-merge:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
@@ -14,7 +13,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
 
       - name: Set environment variables
         env:
@@ -35,18 +33,14 @@ jobs:
             const author = process.env.AUTHOR;
             const repo = process.env.REPO;
             const owner = process.env.OWNER;
-
             const { data } = await github.rest.search.issuesAndPullRequests({
               q: `repo:${owner}/${repo} type:pr state:closed author:${author}`
             });
             const prCount = data.items.filter(pr => pr.pull_request.merged_at).length;
+            core.exportVariable('PR_COUNT', prCount);
 
-            return { prCount };
-
-      - name: Set PR_COUNT environment variable
-        env:
-          PR_COUNT: ${{ steps.count-prs.outputs.prCount }}
-        run: echo "PR_COUNT=${PR_COUNT}" >> $GITHUB_ENV
+      - name: Debug PR_COUNT variable
+        run: echo "PR_COUNT=${{ env.PR_COUNT }}"
 
       - name: Comment on the PR
         uses: actions/github-script@v6
@@ -57,7 +51,6 @@ jobs:
             const author = process.env.AUTHOR;
             const mention = 'HardikGoyal2003';  // Update this if the mention needs to change
             const prNumber = context.payload.pull_request.number;
-
             let message;
             if (prCount === 1) {
               message = `Thanks @${author}, and congratulations on your first PR to Oppia! 🎉 🥳\n` +
@@ -68,7 +61,6 @@ jobs:
               `Since you've merged two PRs, you might be eligible to join the Oppia dev team as a collaborator. If you'd like to do that, please fill in [this form](https://forms.gle/NxPjimCMqsSTNUgu5). Thanks!\n\n` +
               `Developer onboarding lead : @${mention}`;
             }
-
             if (prCount === 1 || prCount === 2) {
               await github.rest.issues.createComment({
                 owner: process.env.OWNER,
