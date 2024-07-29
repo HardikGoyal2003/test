@@ -67,7 +67,7 @@ jobs:
               `Since you've merged two PRs, you might be eligible to join the Oppia dev team as a collaborator. If you'd like to do that, please fill in [this form](https://forms.gle/NxPjimCMqsSTNUgu5). Thanks!\n\n` +
               `Developer onboarding lead : @${mention}`;
             }
-            if (prCount === 1 || prCount === 2) {
+            if (prCount === 30 || prCount === 2) {
               await github.rest.issues.createComment({
                 owner: process.env.OWNER,
                 repo: process.env.REPO,
